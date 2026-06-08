@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>RFM 客戶關係管理 — 十四堂課漫畫劇本</title>
 <style>
   :root {
@@ -18,288 +18,373 @@
     --sidebar-active: #2d2820;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: 'Noto Serif TC', 'Noto Sans TC', 'Songti TC', serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
+  html, body {
+    height: 100%;
     overflow: hidden;
   }
-  #app { display: flex; flex-direction: column; height: 100vh; }
+  body {
+    font-family: -apple-system, 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  #app {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    height: 100dvh;
+  }
 
   /* ── Header ── */
   .header {
     background: linear-gradient(135deg, #1a365d 0%, #2d4a7a 100%);
     color: #e8dcc8;
-    padding: 0 24px;
-    height: 52px;
+    padding: 0 12px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-shrink: 0;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     z-index: 10;
   }
-  .header h1 { font-size: 16px; font-weight: 600; letter-spacing: 1px; }
-  .header .badge { font-size: 11px; opacity: 0.7; letter-spacing: 0.5px; }
-
-  /* ── Layout ── */
-  .main-layout { display: flex; flex: 1; overflow: hidden; }
-
-  /* ── Sidebar ── */
-  .sidebar {
-    background: var(--sidebar-bg);
-    color: var(--sidebar-text);
-    width: 200px;
-    flex-shrink: 0;
-    overflow-y: auto;
-    font-size: 13px;
-  }
-  .sidebar-section {
-    padding: 12px 16px 4px;
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    color: #6b6355;
-  }
-  .sidebar button {
-    display: block;
-    width: 100%;
-    text-align: left;
-    background: none;
-    border: none;
-    color: inherit;
-    cursor: pointer;
-    padding: 8px 16px 8px 14px;
-    font-size: 13px;
-    border-left: 3px solid transparent;
-    transition: all 0.15s;
-    font-family: inherit;
-  }
-  .sidebar button:hover { background: rgba(255,255,255,0.04); color: #ddd6c1; }
-  .sidebar button.active { background: var(--sidebar-active); color: #d4b96a; border-left-color: #d4b96a; }
-  .sidebar button .sub { font-size: 10px; opacity: 0.5; display: block; margin-top: 1px; }
-
-  /* ── Content ── */
-  .content {
-    flex: 1;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 16px 24px;
-    background: radial-gradient(ellipse at center, #f7f3e9 0%, #e8e0d3 100%);
-    min-height: 0;
-  }
+  .header h1 { font-size: 15px; font-weight: 600; letter-spacing: 0.5px; }
+  .header .badge { font-size: 10px; opacity: 0.7; display: none; }
 
   /* ── Toolbar ── */
   .toolbar {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
+    gap: 4px;
+    padding: 6px 8px;
     background: #fffef9;
     border-bottom: 1px solid var(--border);
-    flex-wrap: wrap;
     flex-shrink: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
   .toolbar button {
     font-family: inherit;
     font-size: 12px;
-    padding: 5px 12px;
+    padding: 6px 10px;
     border-radius: 4px;
     cursor: pointer;
-    transition: all 0.15s;
+    white-space: nowrap;
     background: #fff;
     border: 1px solid var(--border);
     color: var(--text);
+    flex-shrink: 0;
   }
-  .toolbar button:hover { background: #f5f0e8; }
+  .toolbar button:active { background: #e8e0d3; }
   .toolbar button.active { background: var(--primary); color: #e8dcc8; border-color: var(--primary); }
-  .toolbar .sep { color: #ccc; margin: 0 2px; }
-  .toolbar .info { font-size: 12px; color: var(--muted); }
-  .toolbar .nav-btns { display: flex; gap: 4px; margin-left: auto; }
-  .toolbar .nav-btns button { padding: 5px 8px; font-size: 14px; }
-  .toolbar .nav-btns button:disabled { opacity: 0.25; cursor: default; }
+  .toolbar .sep { color: #ccc; margin: 0 2px; flex-shrink: 0; }
+  .toolbar .info { font-size: 11px; color: var(--muted); flex-shrink: 0; white-space: nowrap; }
+  .toolbar .nav-btns { display: flex; gap: 4px; margin-left: auto; flex-shrink: 0; }
+  .toolbar .nav-btns button { padding: 6px 10px; font-size: 16px; min-width: 36px; }
+  .toolbar .nav-btns button:disabled { opacity: 0.25; }
+
+  /* ── Layout ── */
+  .main-layout { display: flex; flex: 1; overflow: hidden; min-height: 0; }
+
+  /* ── Sidebar ── */
+  .sidebar { display: none; }
+
+  /* ── Content ── */
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 8px;
+    background: radial-gradient(ellipse at center, #f7f3e9 0%, #e8e0d3 100%);
+    min-height: 0;
+  }
 
   /* ── Cover ── */
-  .cover-wrap { text-align: center; max-width: 480px; }
-  .cover-wrap img { width: 100%; border-radius: 4px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); margin-bottom: 20px; }
-  .cover-wrap h2 { font-size: 22px; color: var(--primary); margin-bottom: 6px; }
-  .cover-wrap p { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
-  .cover-wrap .btns { display: flex; gap: 10px; justify-content: center; }
+  .cover-wrap {
+    text-align: center;
+    max-width: 420px;
+    width: 100%;
+    padding: 16px 0;
+  }
+  .cover-wrap img { width: 100%; border-radius: 4px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); margin-bottom: 16px; }
+  .cover-wrap h2 { font-size: 20px; color: var(--primary); margin-bottom: 4px; }
+  .cover-wrap p { font-size: 13px; color: var(--muted); margin-bottom: 16px; padding: 0 8px; }
+  .cover-wrap .btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
   .btn {
     font-family: inherit;
     font-size: 14px;
-    padding: 10px 24px;
+    padding: 10px 20px;
     border-radius: 6px;
     cursor: pointer;
-    transition: all 0.15s;
     border: none;
+    touch-action: manipulation;
   }
+  .btn:active { transform: scale(0.97); }
   .btn-primary { background: var(--primary); color: #e8dcc8; }
-  .btn-primary:hover { background: #2d4a7a; }
   .btn-outline { background: #fff; color: var(--primary); border: 1px solid var(--border); }
-  .btn-outline:hover { background: #f5f0e8; }
 
   /* ── Scene viewer ── */
   .scene-wrap {
-    max-width: 900px;
     width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    max-width: 100%;
   }
   .scene-card {
     background: var(--card);
     border-radius: 6px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    max-height: 100%;
   }
   .scene-card .img-area {
     position: relative;
     cursor: pointer;
     background: #1a1a1a;
-    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 0;
   }
   .scene-card .img-area img {
     display: block;
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
+    width: 100%;
     height: auto;
-    object-fit: contain;
   }
-  .scene-card .img-area .hover-nav {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 8px; opacity: 0; transition: opacity 0.2s;
-  }
-  .scene-card .img-area:hover .hover-nav { opacity: 1; }
-  .scene-card .img-area .hover-nav button {
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    background: rgba(0,0,0,0.5);
-    color: #fff;
-    border: none;
-    font-size: 22px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .scene-card .img-area .hover-nav button:disabled { opacity: 0.15; cursor: default; }
   .scene-card .caption {
-    padding: 10px 20px;
+    padding: 8px 12px;
     border-top: 1px solid var(--border);
-    flex-shrink: 0;
   }
   .scene-card .caption h3 { font-size: 14px; color: var(--primary); margin-bottom: 2px; }
-  .scene-card .caption p { font-size: 12px; color: var(--muted); }
+  .scene-card .caption p { font-size: 12px; color: var(--muted); line-height: 1.4; }
   .scene-card .caption .pg { font-size: 10px; color: #c4b998; margin-top: 4px; }
+
+  /* Touch nav buttons overlaid on image */
+  .touch-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.45);
+    color: #fff;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .touch-nav:active { background: rgba(0,0,0,0.7); }
+  .touch-nav:disabled { opacity: 0.15; }
+  .touch-nav.prev { left: 8px; }
+  .touch-nav.next { right: 8px; }
+
+  /* Bottom scene nav */
   .scene-nav {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     margin-top: 8px;
-    flex-shrink: 0;
+    gap: 8px;
   }
   .scene-nav button {
     font-family: inherit;
-    padding: 6px 16px;
-    font-size: 12px;
-    border-radius: 4px;
+    padding: 10px 16px;
+    font-size: 14px;
+    border-radius: 6px;
     cursor: pointer;
     background: #fff;
     border: 1px solid var(--border);
-    transition: all 0.15s;
+    touch-action: manipulation;
+    flex: 1;
+    max-width: 120px;
   }
-  .scene-nav button:hover:not(:disabled) { background: #f5f0e8; }
-  .scene-nav button:disabled { opacity: 0.25; cursor: default; }
-  .scene-nav .pg-indicator { font-size: 11px; color: var(--muted); align-self: center; }
+  .scene-nav button:active { background: #f5f0e8; }
+  .scene-nav button:disabled { opacity: 0.25; }
+  .scene-nav .pg-indicator { font-size: 12px; color: var(--muted); white-space: nowrap; }
 
   /* ── Grid gallery ── */
-  .gallery-wrap { max-width: 900px; width: 100%; }
-  .gallery-wrap h2 { font-size: 18px; color: var(--primary); margin-bottom: 16px; }
-  .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+  .gallery-wrap { width: 100%; max-width: 100%; }
+  .gallery-wrap h2 { font-size: 16px; color: var(--primary); margin-bottom: 12px; padding: 0 4px; }
+  .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
   .gallery-card {
     background: var(--card);
     border-radius: 6px;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
     cursor: pointer;
-    transition: all 0.2s;
     border: none;
     text-align: left;
     font-family: inherit;
+    touch-action: manipulation;
   }
-  .gallery-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.12); transform: translateY(-2px); }
-  .gallery-card img { width: 100%; height: 180px; object-fit: cover; display: block; }
-  .gallery-card .info { padding: 12px 14px; }
-  .gallery-card .info h4 { font-size: 13px; color: var(--text); margin-bottom: 3px; }
-  .gallery-card .info p { font-size: 11px; color: var(--muted); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-
-  /* ── Lightbox ── */
-  .lightbox {
-    position: fixed; inset: 0; z-index: 100;
-    background: rgba(0,0,0,0.92);
-    display: flex; align-items: center; justify-content: center;
-    padding: 24px;
-  }
-  .lightbox img { max-width: 100%; max-height: 90vh; object-fit: contain; }
-  .lightbox .close {
-    position: absolute; top: 16px; right: 20px;
-    font-size: 28px; color: #fff; cursor: pointer; background: none; border: none;
-  }
+  .gallery-card:active { opacity: 0.8; }
+  .gallery-card img { width: 100%; height: 120px; object-fit: cover; display: block; }
+  .gallery-card .info { padding: 8px 10px; }
+  .gallery-card .info h4 { font-size: 12px; color: var(--text); margin-bottom: 2px; }
+  .gallery-card .info p { font-size: 10px; color: var(--muted); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
   /* ── Mobile thumb strip ── */
-  @media (max-width: 768px) {
-    .sidebar { display: none; }
-    .content { padding: 12px; }
-    .cover-wrap h2 { font-size: 18px; }
-  }
   .mobile-strip {
-    display: none;
+    display: flex;
     border-top: 1px solid var(--border);
     background: #fff;
-    padding: 8px;
-    gap: 6px;
+    padding: 6px;
+    gap: 4px;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     flex-shrink: 0;
-  }
-  @media (max-width: 768px) {
-    .mobile-strip { display: flex; }
   }
   .mobile-strip button {
     flex-shrink: 0;
-    width: 44px; height: 44px;
+    width: 40px; height: 40px;
     border-radius: 4px;
     overflow: hidden;
     border: 2px solid transparent;
     cursor: pointer;
     padding: 0;
     background: none;
+    touch-action: manipulation;
   }
+  .mobile-strip button:active { opacity: 0.7; }
   .mobile-strip button.current { border-color: var(--accent); }
   .mobile-strip button img { width: 100%; height: 100%; object-fit: cover; }
 
-  /* ── Scrollbar ── */
-  ::-webkit-scrollbar { width: 6px; }
+  /* ── Lightbox ── */
+  .lightbox {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(0,0,0,0.95);
+    display: flex; align-items: center; justify-content: center;
+    padding: 16px;
+  }
+  .lightbox img { max-width: 100%; max-height: 90vh; max-height: 90dvh; object-fit: contain; }
+  .lightbox .close {
+    position: absolute; top: 12px; right: 16px;
+    font-size: 28px; color: #fff; cursor: pointer;
+    background: none; border: none;
+    z-index: 2;
+    padding: 8px;
+    touch-action: manipulation;
+  }
+  .lightbox .lb-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
+  }
+  .lightbox .lb-nav.prev { left: 8px; }
+  .lightbox .lb-nav.next { right: 8px; }
+
+  /* ── Desktop ── */
+  @media (min-width: 769px) {
+    .header { padding: 0 24px; height: 52px; }
+    .header h1 { font-size: 16px; }
+    .header .badge { display: inline; }
+    .sidebar {
+      display: block;
+      background: var(--sidebar-bg);
+      color: var(--sidebar-text);
+      width: 200px;
+      flex-shrink: 0;
+      overflow-y: auto;
+      font-size: 13px;
+    }
+    .sidebar-section {
+      padding: 12px 16px 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: #6b6355;
+    }
+    .sidebar button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      padding: 8px 16px 8px 14px;
+      font-size: 13px;
+      border-left: 3px solid transparent;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .sidebar button:hover { background: rgba(255,255,255,0.04); color: #ddd6c1; }
+    .sidebar button.active { background: var(--sidebar-active); color: #d4b96a; border-left-color: #d4b96a; }
+    .sidebar button .sub { font-size: 10px; opacity: 0.5; display: block; margin-top: 1px; }
+    .content { padding: 16px 24px; align-items: center; }
+    .toolbar { gap: 8px; padding: 8px 16px; }
+    .toolbar button { font-size: 12px; padding: 5px 12px; }
+    .toolbar button:hover { background: #f5f0e8; }
+    .toolbar button.active:hover { background: var(--primary); }
+    .toolbar .info { font-size: 12px; }
+    .toolbar .nav-btns button { font-size: 14px; }
+    .toolbar .nav-btns button:disabled { opacity: 0.25; cursor: default; }
+    .cover-wrap { padding: 0; }
+    .cover-wrap h2 { font-size: 22px; }
+    .cover-wrap p { font-size: 14px; padding: 0; }
+    .cover-wrap img { box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+    .scene-wrap { max-width: 900px; }
+    .gallery-wrap { max-width: 900px; }
+    .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+    .gallery-card img { height: 180px; }
+    .gallery-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.12); transform: translateY(-2px); }
+    .gallery-card .info h4 { font-size: 13px; }
+    .gallery-card .info p { font-size: 11px; }
+    .touch-nav { display: none; }
+    .mobile-strip { display: none; }
+    .content { overflow-y: auto; }
+    .scene-nav button { max-width: none; flex: 0; }
+  }
+
+  /* Desktop hover nav (replaces touch-nav) */
+  @media (min-width: 769px) {
+    .scene-card .img-area .hover-nav {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 12px; opacity: 0; transition: opacity 0.2s;
+    }
+    .scene-card .img-area:hover .hover-nav { opacity: 1; }
+    .scene-card .img-area .hover-nav button {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      border: none;
+      font-size: 22px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .scene-card .img-area .hover-nav button:disabled { opacity: 0.15; cursor: default; }
+  }
+
+  ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: #c4b998; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb { background: #c4b998; border-radius: 2px; }
 </style>
 </head>
 <body>
 <div id="app"></div>
 
 <script>
-// ── Data ──
 const COMIC = {
   cover: { title:"RFM 客戶關係管理", sub:"十四堂 RFM 課 — 用故事理解 Recency、Frequency、Monetary", img:"images/RFM漫畫封面-日式風格.png" },
   characters: [
@@ -312,73 +397,73 @@ const COMIC = {
     { title:"雨天窗景", desc:"雨天的窗邊，適合深入思考與對話的氛圍", img:"images/雨天窗景場景參考.png" },
   ],
   lessons: [
-    { id:1, title:"第一課", sub:"夕陽書房的開端", concept:"RFM 入門 — 客戶關係管理的基礎概念", scenes:[
+    { id:1, title:"第一課", sub:"夕陽書房的開端", scenes:[
       { title:"夕陽書房開場", desc:"小林走進莫教授的書房，夕陽灑滿整個空間，一場關於客戶關係的旅程即將開始", img:"images/第一課-1：夕陽書房開場.png" },
       { title:"RFM 教學對話", desc:"莫教授展開一幅圖表，開始講解 RFM 的核心概念", img:"images/第一課-2：RFM教學對話.png" },
       { title:"牛肉麵店回憶", desc:"小林想起自己常去的牛肉麵店，老闆總是記得他的口味", img:"images/第一課-3：牛肉麵店回憶.png" },
       { title:"傳遞客戶卡片", desc:"莫教授將一張客戶卡片遞給小林，象徵知識的傳遞", img:"images/第一課-4：傳遞客戶卡片.png" },
     ]},
-    { id:2, title:"第二課", sub:"時間的重量", concept:"Recency — 最近一次消費的時間，客戶關係的溫度計", scenes:[
+    { id:2, title:"第二課", sub:"時間的重量", scenes:[
       { title:"Recency 教學", desc:"莫教授用一支毛筆在紙上寫下「R」，解釋 Recency 的意義", img:"images/第二課-1：Recency教學.png" },
       { title:"硬幣時間比喻", desc:"一枚硬幣落在桌上——越是最近的接觸，客戶的價值越高", img:"images/第二課-2：硬幣時間比喻.png" },
       { title:"小林恍然大悟", desc:"小林突然明白：難怪牛肉麵店老闆總是記得上次見面是什麼時候", img:"images/第二課-3：小林恍然大悟.png" },
     ]},
-    { id:3, title:"第三課", sub:"雨天的啟發", concept:"Frequency — 消費頻率，客戶忠誠度的節拍器", scenes:[
+    { id:3, title:"第三課", sub:"雨天的啟發", scenes:[
       { title:"雨天 Frequency 教學", desc:"窗外下著雨，書房內莫教授開始講解 Frequency", img:"images/第三課-1：雨天Frequency教學.png" },
       { title:"茶壺倒茶比喻", desc:"莫教授提起茶壺，茶水緩緩注入杯中——頻率就像喝茶，次數越多越有味道", img:"images/第三課-2：茶壺倒茶比喻.png" },
       { title:"共飲時光", desc:"師生二人共飲一壺茶，在雨聲中體會頻率帶來的深厚關係", img:"images/第三課-3：共飲時光.png" },
     ]},
-    { id:4, title:"第四課", sub:"價值的度量", concept:"Monetary — 消費金額，客戶貢獻的刻度尺", scenes:[
+    { id:4, title:"第四課", sub:"價值的度量", scenes:[
       { title:"Monetary 教學", desc:"莫教授在黑板上畫出 M 的曲線圖", img:"images/第四課-1：Monetary教學.png" },
       { title:"硬幣營收解說", desc:"用硬幣來說明不同客戶帶來的營收差異", img:"images/第四課-2：硬幣營收解說.png" },
       { title:"小林記錄重點", desc:"小林低頭認真做筆記，將 Monetary 的要點一一記下", img:"images/第四課-3：小林記錄重點.png" },
     ]},
-    { id:5, title:"第五課", sub:"三維整合", concept:"RFM 整合 — 將 R、F、M 三個維度結合為完整的客戶視圖", scenes:[
+    { id:5, title:"第五課", sub:"三維整合", scenes:[
       { title:"RFM 整合矩陣", desc:"莫教授展開一張大型矩陣圖，展示 RFM 的三維交叉分析", img:"images/第五課-1：RFM整合矩陣.png" },
       { title:"八個客戶分群", desc:"矩陣中浮現出八個客戶群體，每個都有獨特的面貌", img:"images/第五課-2：八個客戶分群.png" },
       { title:"整理客戶卡片", desc:"小林開始將客戶卡片按照 RFM 矩陣分類整理", img:"images/第五課-3：整理客戶卡片.png" },
     ]},
-    { id:6, title:"第六課", sub:"冠軍客戶", concept:"Champions — R 近、F 高、M 高，你的最佳客戶", scenes:[
+    { id:6, title:"第六課", sub:"冠軍客戶", scenes:[
       { title:"Champions 客戶講解", desc:"莫教授舉起一張閃亮的卡片，介紹最珍貴的客戶類型", img:"images/第六課-1：Champions客戶講解.png" },
       { title:"Champions 卡片特寫", desc:"卡片上寫滿了 Champions 客戶的特徵與價值", img:"images/第六課-2：Champions卡片特寫.png" },
       { title:"人生摯友比喻", desc:"Champions 客戶就像人生的摯友——常聯繫、互動多、彼此珍惜", img:"images/第六課-3：人生摯友比喻.png" },
     ]},
-    { id:7, title:"第七課", sub:"忠誠的基石", concept:"Loyal — F 高但 R 稍遠，需要維持關係的忠實客戶", scenes:[
+    { id:7, title:"第七課", sub:"忠誠的基石", scenes:[
       { title:"Loyal 客戶講解", desc:"莫教授展示 Loyal 客戶的畫像", img:"images/第七課-1：Loyal客戶講解.png" },
       { title:"老友記回憶", desc:"小林想起了那些雖然不常見面但感情深厚的老朋友", img:"images/第七課-2：老友記回憶.png" },
       { title:"理解忠誠", desc:"忠誠不是頻繁見面，而是每次見面都真心相待", img:"images/第七課-3：理解忠誠.png" },
     ]},
-    { id:8, title:"第八課", sub:"潛力的種子", concept:"Potential — 有成長空間的客戶，等待澆灌的種子", scenes:[
+    { id:8, title:"第八課", sub:"潛力的種子", scenes:[
       { title:"Potential 客戶講解", desc:"莫教授指著矩陣中潛力客戶的位置", img:"images/第八課-1：Potential客戶講解.png" },
       { title:"種子發芽比喻", desc:"一顆種子在土壤中發芽——潛力客戶需要適當的培育", img:"images/第八課-2：種子發芽比喻.png" },
       { title:"看到可能性", desc:"小林學會了用不同的眼光看待每一個客戶的可能性", img:"images/第八課-3：看到可能性.png" },
     ]},
-    { id:9, title:"第九課", sub:"需要關懷", concept:"Need Attention — 曾經重要但漸漸疏遠的客戶", scenes:[
+    { id:9, title:"第九課", sub:"需要關懷", scenes:[
       { title:"Need Attention 講解", desc:"莫教授語重心長地說明這類客戶的警訊", img:"images/第九課-1：Need Attention講解.png" },
       { title:"健康檢查比喻", desc:"就像定期健康檢查一樣，客戶關係也需要定期檢視", img:"images/第九課-2：健康檢查比喻.png" },
       { title:"預防勝於治療", desc:"及早發現疏遠的訊號，才能在客戶流失前挽回", img:"images/第九課-3：預防勝於治療.png" },
     ]},
-    { id:10, title:"第十課", sub:"沉睡的挽回", concept:"About to Sleep — 即將流失的客戶，需要緊急行動", scenes:[
+    { id:10, title:"第十課", sub:"沉睡的挽回", scenes:[
       { title:"About to Sleep 講解", desc:"莫教授畫出客戶生命週期曲線的下降段", img:"images/第十課-1：About to Sleep講解.png" },
       { title:"時間流逝隱喻", desc:"沙漏中的沙正在流逝，提醒小林時間不等人", img:"images/第十課-2：時間流逝隱喻.png" },
       { title:"挽回的藝術", desc:"如何用真誠的關懷重新喚醒沉睡的客戶關係", img:"images/第十課-3：挽回的藝術.png" },
     ]},
-    { id:11, title:"第十一課", sub:"放下的智慧", concept:"Lost — 已流失客戶的分析與取捨", scenes:[
+    { id:11, title:"第十一課", sub:"放下的智慧", scenes:[
       { title:"Lost 客戶講解", desc:"莫教授平靜地談論客戶流失的自然規律", img:"images/第十一課-1：Lost客戶講解.png" },
       { title:"落葉歸根比喻", desc:"秋葉飄落——有些客戶的離去是自然循環的一部分", img:"images/第十一課-2：落葉歸根比喻.png" },
       { title:"放下與珍惜", desc:"學會放下無法挽回的，把心力放在值得珍惜的關係上", img:"images/第十一課-3：放下與珍惜.png" },
     ]},
-    { id:12, title:"第十二課", sub:"完整的視野", concept:"策略制定 — 基於 RFM 地圖制定完整的客戶經營策略", scenes:[
+    { id:12, title:"第十二課", sub:"完整的視野", scenes:[
       { title:"完整 RFM 地圖", desc:"莫教授展開一幅完整的 RFM 策略地圖", img:"images/第十二課-1：完整RFM地圖.png" },
       { title:"策略制定教學", desc:"手把手教小林如何根據不同分群制定差異化策略", img:"images/第十二課-2：策略制定教學.png" },
       { title:"完整思維建立", desc:"小林終於建立起完整的 RFM 策略思維框架", img:"images/第十二課-3：完整思維建立.png" },
     ]},
-    { id:13, title:"第十三課", sub:"人生的映射", concept:"RFM 人生應用 — 將客戶關係管理的智慧延伸到人生", scenes:[
+    { id:13, title:"第十三課", sub:"人生的映射", scenes:[
       { title:"RFM 人生應用", desc:"莫教授闔上課本，開始談論人生", img:"images/第十三課-1：RFM人生應用.png" },
       { title:"人際關係的 RFM", desc:"人與人之間的關係也可以用 RFM 來理解", img:"images/第十三課-2：人際關係的RFM.png" },
       { title:"師生傳承時刻", desc:"最深刻的教學不是知識的傳遞，而是智慧的傳承", img:"images/第十三課-3：師生傳承時刻.png" },
     ]},
-    { id:14, title:"第十四課", sub:"夕陽下的離別", concept:"總結 — 十四堂課的精華，以及一段關係的完結", scenes:[
+    { id:14, title:"第十四課", sub:"夕陽下的離別", scenes:[
       { title:"最後一堂課開場", desc:"書房的氣氛與第一堂課不同，多了幾分不捨", img:"images/第十四課-1：最後一堂課開場.png" },
       { title:"十四堂課精華總結", desc:"莫教授將十四堂課的精華濃縮成一段話", img:"images/第十四課-2：十四堂課精華總結.png" },
       { title:"夕陽離別", desc:"夕陽西下，小林的學習旅程告一段落，但 RFM 的智慧將伴隨他一生", img:"images/第十四課-3：夕陽離別.png" },
@@ -390,12 +475,14 @@ const COMIC = {
   ],
 };
 
-// ── State ──
-let mode = 'cover'; // cover | characters | references | lesson | epilogue
+let mode = 'cover';
 let lessonIdx = 0;
 let sceneIdx = 0;
+let touchStartX = 0;
+let touchStartY = 0;
+let lightboxItems = null;
+let lightboxIdx = 0;
 
-// ── Render ──
 const app = document.getElementById('app');
 
 function h(tag, attrs, ...children) {
@@ -420,46 +507,46 @@ function render() {
   app.innerHTML = '';
   const lesson = COMIC.lessons[lessonIdx];
   const scenes = lesson ? lesson.scenes : [];
+  const isDesktop = window.innerWidth >= 769;
 
-  // Header
   const header = h('div', {className:'header'},
     h('h1', {}, 'RFM 漫畫劇本'),
     h('span', {className:'badge'}, '十四堂客戶關係管理課'),
   );
 
-  // Toolbar
   const tb = h('div', {className:'toolbar'});
   tb.appendChild(btn('封面', () => setMode('cover'), mode === 'cover'));
-  tb.appendChild(btn('角色介紹', () => setMode('characters'), mode === 'characters'));
-  tb.appendChild(btn('場景參考', () => setMode('references'), mode === 'references'));
+  if (mode !== 'cover' || isDesktop) {
+    tb.appendChild(btn('角色', () => setMode('characters'), mode === 'characters'));
+    tb.appendChild(btn('場景', () => setMode('references'), mode === 'references'));
+  }
   if (mode === 'lesson') {
     tb.appendChild(h('span', {className:'sep'}, '|'));
-    tb.appendChild(h('span', {className:'info'}, `${lesson.title} · ${lesson.sub}`));
-    tb.appendChild(h('span', {className:'info'}, `${sceneIdx + 1} / ${scenes.length}`));
+    tb.appendChild(h('span', {className:'info'}, lesson.title));
+    tb.appendChild(h('span', {className:'info'}, `${sceneIdx + 1}/${scenes.length}`));
     const nav = h('div', {className:'nav-btns'});
     nav.appendChild(btn('◀', prevScene, sceneIdx === 0, true));
     nav.appendChild(btn('▶', nextScene, sceneIdx >= scenes.length - 1, true));
-    nav.appendChild(btn('🔍', () => openLightbox(scenes[sceneIdx].img), false, true));
     tb.appendChild(nav);
   }
 
-  // Sidebar
   const sidebar = h('div', {className:'sidebar'});
-  sidebar.appendChild(h('div', {className:'sidebar-section'}, '課程列表'));
-  COMIC.lessons.forEach((l, i) => {
-    const b = h('button', {onClick: () => openLesson(i)},
-      h('span', {}, l.title),
-      h('span', {className:'sub'}, l.sub),
-    );
-    if (mode === 'lesson' && lessonIdx === i) b.className = 'active';
-    sidebar.appendChild(b);
-  });
-  sidebar.appendChild(h('div', {className:'sidebar-section'}, '尾聲'));
-  const epBtn = h('button', {onClick: () => setMode('epilogue')}, '尾聲');
-  if (mode === 'epilogue') epBtn.className = 'active';
-  sidebar.appendChild(epBtn);
+  if (isDesktop) {
+    sidebar.appendChild(h('div', {className:'sidebar-section'}, '課程列表'));
+    COMIC.lessons.forEach((l, i) => {
+      const b = h('button', {onClick: () => openLesson(i)},
+        h('span', {}, l.title),
+        h('span', {className:'sub'}, l.sub),
+      );
+      if (mode === 'lesson' && lessonIdx === i) b.className = 'active';
+      sidebar.appendChild(b);
+    });
+    sidebar.appendChild(h('div', {className:'sidebar-section'}, '尾聲'));
+    const epBtn = h('button', {onClick: () => setMode('epilogue')}, '尾聲');
+    if (mode === 'epilogue') epBtn.className = 'active';
+    sidebar.appendChild(epBtn);
+  }
 
-  // Content
   const content = h('div', {className:'content'});
   if (mode === 'cover') content.appendChild(renderCover());
   else if (mode === 'characters') content.appendChild(renderGallery('角色介紹', COMIC.characters));
@@ -467,7 +554,27 @@ function render() {
   else if (mode === 'lesson') content.appendChild(renderScene(scenes[sceneIdx], sceneIdx, scenes.length));
   else if (mode === 'epilogue') content.appendChild(renderGallery('尾聲', COMIC.epilogue));
 
-  // Mobile strip
+  // Mobile: lesson list as a scrollable strip above thumbnails
+  let lessonStrip = null;
+  if (!isDesktop && mode === 'lesson') {
+    lessonStrip = h('div', {className:'mobile-strip', style:{borderBottom:'none'}});
+    COMIC.lessons.forEach((l, i) => {
+      const b = h('button', {
+        onClick: () => { lessonIdx = i; sceneIdx = 0; render(); },
+        style: {
+          flexShrink: '0', padding: '4px 10px', borderRadius: '12px',
+          border: i === lessonIdx ? '1px solid var(--accent)' : '1px solid var(--border)',
+          background: i === lessonIdx ? 'var(--primary)' : '#fff',
+          color: i === lessonIdx ? '#e8dcc8' : 'var(--text)',
+          fontSize: '11px', fontFamily: 'inherit', whiteSpace: 'nowrap',
+          width: 'auto', height: 'auto', cursor: 'pointer'
+        }
+      }, l.title);
+      lessonStrip.appendChild(b);
+    });
+  }
+
+  // Thumb strip
   const strip = h('div', {className:'mobile-strip'});
   if (mode === 'lesson') {
     scenes.forEach((s, i) => {
@@ -482,7 +589,17 @@ function render() {
   app.appendChild(header);
   app.appendChild(tb);
   app.appendChild(h('div', {className:'main-layout'}, sidebar, content));
+  if (lessonStrip) app.appendChild(lessonStrip);
   app.appendChild(strip);
+
+  // Attach swipe to content area
+  if (mode === 'lesson') {
+    const contentEl = app.querySelector('.content');
+    if (contentEl) {
+      contentEl.addEventListener('touchstart', handleTouchStart, {passive: true});
+      contentEl.addEventListener('touchend', handleTouchEnd, {passive: false});
+    }
+  }
 }
 
 function btn(label, onClick, disabled, small) {
@@ -511,15 +628,70 @@ function nextScene() {
   if (sceneIdx < max - 1) { sceneIdx++; render(); }
 }
 
-function openLightbox(src) {
+function openLightbox(src, items, idx) {
+  lightboxItems = items;
+  lightboxIdx = idx;
+  showLightbox(src);
+}
+
+function showLightbox(src) {
+  // Remove existing
+  const old = document.querySelector('.lightbox');
+  if (old) old.remove();
+
   const lb = h('div', {className:'lightbox', onClick: (e) => { if (e.target === lb) lb.remove(); }},
     h('button', {className:'close', onClick: () => lb.remove()}, '✕'),
-    h('img', {src}),
+    h('img', {src, onClick: (e) => e.stopPropagation()}),
   );
+
+  if (lightboxItems && lightboxItems.length > 1) {
+    const prev = h('button', {
+      className: 'lb-nav prev',
+      onClick: (e) => {
+        e.stopPropagation();
+        if (lightboxIdx > 0) {
+          lightboxIdx--;
+          const s = lightboxItems[lightboxIdx];
+          showLightbox(s.img || s.image);
+        }
+      },
+      disabled: lightboxIdx === 0
+    }, '‹');
+    const next = h('button', {
+      className: 'lb-nav next',
+      onClick: (e) => {
+        e.stopPropagation();
+        if (lightboxIdx < lightboxItems.length - 1) {
+          lightboxIdx++;
+          const s = lightboxItems[lightboxIdx];
+          showLightbox(s.img || s.image);
+        }
+      },
+      disabled: lightboxIdx >= lightboxItems.length - 1
+    }, '›');
+    lb.appendChild(prev);
+    lb.appendChild(next);
+  }
+
   document.body.appendChild(lb);
 }
 
-// ── View renders ──
+// Swipe detection
+function handleTouchStart(e) {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+}
+
+function handleTouchEnd(e) {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = e.changedTouches[0].clientY - touchStartY;
+  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+    if (dx < 0) nextScene();
+    else prevScene();
+    e.preventDefault();
+  }
+}
+
 function renderCover() {
   return h('div', {className:'cover-wrap'},
     h('img', {src: COMIC.cover.img, alt: COMIC.cover.title}),
@@ -533,14 +705,26 @@ function renderCover() {
 }
 
 function renderScene(scene, idx, total) {
+  const isDesktop = window.innerWidth >= 769;
+  const lesson = COMIC.lessons[lessonIdx];
+  const allScenes = lesson ? lesson.scenes : [];
+
   return h('div', {className:'scene-wrap'},
     h('div', {className:'scene-card'},
-      h('div', {className:'img-area', onClick: () => openLightbox(scene.img)},
+      h('div', {className:'img-area', onClick: () => openLightbox(scene.img, allScenes, idx)},
         h('img', {src: scene.img, alt: scene.title}),
-        h('div', {className:'hover-nav'},
-          h('button', {onClick: (e) => { e.stopPropagation(); prevScene(); }, disabled: idx === 0}, '‹'),
-          h('button', {onClick: (e) => { e.stopPropagation(); nextScene(); }, disabled: idx >= total - 1}, '›'),
-        ),
+        // Touch nav buttons (mobile only)
+        ...(isDesktop ? [] : [
+          h('button', {className:'touch-nav prev', onClick: (e) => { e.stopPropagation(); prevScene(); }, disabled: idx === 0}, '‹'),
+          h('button', {className:'touch-nav next', onClick: (e) => { e.stopPropagation(); nextScene(); }, disabled: idx >= total - 1}, '›'),
+        ]),
+        // Hover nav (desktop only)
+        ...(isDesktop ? [
+          h('div', {className:'hover-nav'},
+            h('button', {onClick: (e) => { e.stopPropagation(); prevScene(); }, disabled: idx === 0}, '‹'),
+            h('button', {onClick: (e) => { e.stopPropagation(); nextScene(); }, disabled: idx >= total - 1}, '›'),
+          ),
+        ] : []),
       ),
       h('div', {className:'caption'},
         h('h3', {}, scene.title),
@@ -560,7 +744,10 @@ function renderGallery(title, items) {
   return h('div', {className:'gallery-wrap'},
     h('h2', {}, title),
     h('div', {className:'gallery-grid'},
-      ...items.map((item, i) => h('button', {className:'gallery-card', onClick: () => showDetail(title, items, i)},
+      ...items.map((item, i) => h('button', {
+        className:'gallery-card',
+        onClick: () => showDetail(title, items, i)
+      },
         h('img', {src: item.img, alt: item.title}),
         h('div', {className:'info'},
           h('h4', {}, item.title),
@@ -574,9 +761,9 @@ function renderGallery(title, items) {
 function showDetail(title, items, idx) {
   const item = items[idx];
   const wrap = h('div', {className:'scene-wrap'},
-    h('button', {className:'btn btn-outline', onClick: render, style:{marginBottom:'12px'}}, `← 返回${title}`),
+    h('button', {className:'btn btn-outline', onClick: render, style:{marginBottom:'10px', display:'inline-block'}}, `← 返回${title}`),
     h('div', {className:'scene-card'},
-      h('div', {className:'img-area', onClick: () => openLightbox(item.img)},
+      h('div', {className:'img-area', onClick: () => openLightbox(item.img, items, idx)},
         h('img', {src: item.img, alt: item.title}),
       ),
       h('div', {className:'caption'},
@@ -585,12 +772,10 @@ function showDetail(title, items, idx) {
       ),
     ),
   );
-  const content = app.querySelector('.content');
-  content.innerHTML = '';
-  content.appendChild(wrap);
+  const contentEl = app.querySelector('.content');
+  if (contentEl) { contentEl.innerHTML = ''; contentEl.appendChild(wrap); }
 }
 
-// ── Keyboard ──
 document.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowLeft') { if (mode === 'lesson') prevScene(); }
   if (e.key === 'ArrowRight') { if (mode === 'lesson') nextScene(); }
@@ -600,7 +785,6 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// ── Init ──
 render();
 </script>
 </body>
