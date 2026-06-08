@@ -13,12 +13,11 @@ const MIME = {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    let key = url.pathname.slice(1);
+    let key = decodeURIComponent(url.pathname.slice(1));
     if (!key) key = "index.html";
 
     const obj = await env.ASSETS.get(key);
     if (!obj) {
-      // SPA fallback
       if (!key.includes(".")) {
         const fallback = await env.ASSETS.get("index.html");
         if (fallback) {
