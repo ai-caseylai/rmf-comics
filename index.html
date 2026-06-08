@@ -525,8 +525,8 @@ function render() {
     tb.appendChild(h('span', {className:'info'}, lesson.title));
     tb.appendChild(h('span', {className:'info'}, `${sceneIdx + 1}/${scenes.length}`));
     const nav = h('div', {className:'nav-btns'});
-    nav.appendChild(btn('◀', prevScene, sceneIdx === 0, true));
-    nav.appendChild(btn('▶', nextScene, sceneIdx >= scenes.length - 1, true));
+    nav.appendChild(btn('◀', prevScene, !hasPrev(), true));
+    nav.appendChild(btn('▶', nextScene, !hasNext(), true));
     tb.appendChild(nav);
   }
 
@@ -620,12 +620,37 @@ function openLesson(i) {
 }
 
 function prevScene() {
-  if (sceneIdx > 0) { sceneIdx--; render(); }
+  if (sceneIdx > 0) {
+    sceneIdx--; render();
+  } else if (lessonIdx > 0) {
+    lessonIdx--;
+    sceneIdx = COMIC.lessons[lessonIdx].scenes.length - 1;
+    render();
+  }
 }
 
 function nextScene() {
-  const max = COMIC.lessons[lessonIdx].scenes.length;
-  if (sceneIdx < max - 1) { sceneIdx++; render(); }
+  const lesson = COMIC.lessons[lessonIdx];
+  const max = lesson ? lesson.scenes.length : 0;
+  if (sceneIdx < max - 1) {
+    sceneIdx++; render();
+  } else if (lessonIdx < COMIC.lessons.length - 1) {
+    lessonIdx++;
+    sceneIdx = 0;
+    render();
+  }
+}
+
+function hasNext() {
+  const lesson = COMIC.lessons[lessonIdx];
+  if (!lesson) return false;
+  if (sceneIdx < lesson.scenes.length - 1) return true;
+  return lessonIdx < COMIC.lessons.length - 1;
+}
+
+function hasPrev() {
+  if (sceneIdx > 0) return true;
+  return lessonIdx > 0;
 }
 
 function openLightbox(src, items, idx) {
@@ -715,14 +740,14 @@ function renderScene(scene, idx, total) {
         h('img', {src: scene.img, alt: scene.title}),
         // Touch nav buttons (mobile only)
         ...(isDesktop ? [] : [
-          h('button', {className:'touch-nav prev', onClick: (e) => { e.stopPropagation(); prevScene(); }, disabled: idx === 0}, '‹'),
-          h('button', {className:'touch-nav next', onClick: (e) => { e.stopPropagation(); nextScene(); }, disabled: idx >= total - 1}, '›'),
+          h('button', {className:'touch-nav prev', onClick: (e) => { e.stopPropagation(); prevScene(); }, disabled: !hasPrev()}, '‹'),
+          h('button', {className:'touch-nav next', onClick: (e) => { e.stopPropagation(); nextScene(); }, disabled: !hasNext()}, '›'),
         ]),
         // Hover nav (desktop only)
         ...(isDesktop ? [
           h('div', {className:'hover-nav'},
-            h('button', {onClick: (e) => { e.stopPropagation(); prevScene(); }, disabled: idx === 0}, '‹'),
-            h('button', {onClick: (e) => { e.stopPropagation(); nextScene(); }, disabled: idx >= total - 1}, '›'),
+            h('button', {onClick: (e) => { e.stopPropagation(); prevScene(); }, disabled: !hasPrev()}, '‹'),
+            h('button', {onClick: (e) => { e.stopPropagation(); nextScene(); }, disabled: !hasNext()}, '›'),
           ),
         ] : []),
       ),
@@ -732,11 +757,18 @@ function renderScene(scene, idx, total) {
         h('div', {className:'pg'}, `${idx + 1} / ${total}`),
       ),
     ),
-    h('div', {className:'scene-nav'},
-      h('button', {onClick: prevScene, disabled: idx === 0}, '← 上一頁'),
-      h('span', {className:'pg-indicator'}, `${idx + 1} / ${total}`),
-      h('button', {onClick: nextScene, disabled: idx >= total - 1}, '下一頁 →'),
-    ),
+    (() => {
+      const atLast = idx >= total - 1;
+      const nextLesson = atLast && lessonIdx < COMIC.lessons.length - 1 ? COMIC.lessons[lessonIdx + 1] : null;
+      const nextLabel = nextLesson ? `下一課 ›` : '下一頁 →';
+      const prevLesson = idx === 0 && lessonIdx > 0 ? COMIC.lessons[lessonIdx - 1] : null;
+      const prevLabel = prevLesson ? `‹ 上一課` : '← 上一頁';
+      return h('div', {className:'scene-nav'},
+        h('button', {onClick: prevScene, disabled: !hasPrev(), title: prevLesson ? prevLesson.title : ''}, prevLabel),
+        h('span', {className:'pg-indicator'}, nextLesson ? `${lessonIdx + 1}/${COMIC.lessons.length} 課` : `${idx + 1} / ${total}`),
+        h('button', {onClick: nextScene, disabled: !hasNext(), title: nextLesson ? nextLesson.title : ''}, nextLabel),
+      );
+    })(),
   );
 }
 
